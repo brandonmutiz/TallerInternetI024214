@@ -7,22 +7,32 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aula7.tallerinterneti024214.Http.HttpManager;
 import com.example.aula7.tallerinterneti024214.Model.Users;
+import com.example.aula7.tallerinterneti024214.Parser.JsonUsers;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+ProgressBar progressBar;
+TextView textView;
+    List<Users> UsersList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        progressBar = (ProgressBar) findViewById(R.id.id_pb_load);
+        textView = (TextView) findViewById(R.id.id_textv_data);
+        loadData();
     }
     public Boolean isOnLine(){
         // Hacer llamado al servicio de conectividad utilizando el ConnectivityManager
@@ -38,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
-    public void loadData(View view){
+    public void loadData(){
         if (isOnLine()){
             // Hacer llamado a la tarea
             MyTask task = new MyTask();
@@ -55,7 +65,12 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, String.valueOf(UsersList.size()), Toast.LENGTH_SHORT).show();
 
         for(Users str : UsersList) {
-            textView.append(str.toString() + "\n");
+            textView.append(str.getNombre() + "\n");
+            textView.append(str.getEdad() + "\n");
+            textView.append(str.getCodigo() + "\n");
+            textView.append(str.getCorreo() + "\n");
+            textView.append(str.getPass()+"\n");
+            textView.append("\n");
         }
     }
 
@@ -97,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
 
             try {
-                UserList = Json.getData(s);
+                UsersList = JsonUsers.getData(s);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
